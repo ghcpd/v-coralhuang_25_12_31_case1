@@ -1,108 +1,77 @@
-You are a software engineer working on a small Python codebase.
+You are a software engineer.
 
-You are given exactly TWO files:
-- explain.py (baseline implementation)
-- test_explain.py (fixed test suite)
+You are given a minimal Flask-like framework skeleton in miniapp.py and a fixed test suite in test_routes.py.
+The framework supports:
+- @app.route(...) route registration
+- Blueprint routes and app.register_blueprint(bp, url_prefix=...)
 
-You must produce THREE deliverables:
+Your task is to implement a NEW FEATURE: Route Manifest + Conflict Analysis.
 
-A) Implement the function `explain_config_value` in explain.py so that all tests pass.
-B) Create a one-command test script named `run_tests.sh`.
-C) Write a README.md explaining how to run and evaluate the solution.
+You MUST deliver:
+1) An implementation of MiniApp.route_manifest() in miniapp.py
+2) A runnable one-command test script: run_tests.sh
+3) A README.md
 
-You are NOT allowed to modify test_explain.py.
-You may add new files only if explicitly required (this task requires run_tests.sh and README.md).
-Do NOT introduce third-party runtime dependencies besides pytest for testing.
+You MAY add additional automated tests (new test files), if you believe they improve correctness.
+You MUST NOT modify test_routes.py.
 
----
+-----------------------
+Feature Requirements
+-----------------------
 
-Feature: "Config Diff Explanation"
+Implement MiniApp.route_manifest() to return a JSON-serializable dict with these top-level keys:
 
-There are three configuration layers from lowest to highest priority:
+- "routes": a list of route entries, one per registered route
+- "conflicts": a list of conflict/override findings
+- "summary": aggregate counts to support quick inspection
 
-1) base
-2) env
-3) override
+Each route entry MUST include at least:
+- method (string)
+- path (string)
+- endpoint (string)
+- source (string or null)
+- blueprint (string or null)
+- order (int)  # registration order
 
-Priority rule:
-override > env > base
+Conflict detection requirement:
+- A conflict occurs when two or more routes share the same (method, path).
+- The manifest must include an entry in "conflicts" for each conflicting (method, path).
+- Each conflict entry MUST include at least: method, path, and a list of the involved routes (by order or endpoint).
 
-The function `explain_config_value` must return an Explanation object describing
-how the final value of a configuration key is derived.
+Determinism requirement:
+- "routes" must be sorted in a stable deterministic way (registration order is acceptable).
+- "conflicts" ordering must also be stable.
 
----
+The provided tests check only a minimum baseline.
+Your implementation must be useful beyond the tests, but does not need to match Flask internals.
 
-Rules:
+-----------------------
+Deliverables: run_tests.sh and README.md
+-----------------------
 
-1. Nested keys:
-   - The key may be dot-separated, e.g. "db.timeout".
-   - Each segment traverses dictionaries.
-   - If any intermediate segment is missing or is not a dict,
-     that layer treats the key as missing.
+run_tests.sh:
+- Must be executable
+- Must install pytest if needed (using python -m pip)
+- Must run the full test suite (including any extra tests you add)
+- Must exit non-zero on failure
+- Must print a short summary at the end (pass/fail)
 
-2. Explicit None:
-   - If a layer defines the key with value None, the key is explicitly defined.
-   - None is a valid value and must not be treated as missing.
-   - The source must point to that layer.
+README.md:
+- Explain what Route Manifest is, what problem it solves
+- Document the JSON schema at a high level (keys + meaning)
+- Provide at least one example manifest output snippet
+- Explain how to run: ./run_tests.sh
+- Keep it technical and concise
 
-3. Delete semantics:
-   - The constant DELETE represents explicit deletion.
-   - If the highest-priority layer that defines the key sets it to DELETE:
-       - The final result is treated as missing.
-       - final_value must be None.
-       - source must be "missing".
-       - All lower-priority values are suppressed.
+-----------------------
+Self-check requirement (for human review)
+-----------------------
 
-4. overridden:
-   - True if the key is defined in two or more layers among base/env/override.
-   - Definition includes explicit None and DELETE.
-   - Otherwise False.
-
-5. override_chain:
-   - A list of layer names that define the key.
-   - Ordered from lowest to highest priority:
-     ["base", "env", "override"].
-   - Includes layers where the value is None or DELETE.
-   - Missing everywhere results in an empty list.
-
----
-
-Constraints:
-
-- Do NOT mutate the input dictionaries.
-- Do NOT merge dictionaries and reverse-infer explanations.
-- Do NOT change any tests.
-- Do NOT change public APIs (DELETE, Explanation, function signature).
-- Do NOT add extra executables or tooling beyond what is required.
-
----
-
-Deliverable details:
-
-A) explain.py
-   - Only the body of explain_config_value should be changed.
-   - All semantics must match the test suite exactly.
-
-B) run_tests.sh
-   - Must be executable.
-   - Must install pytest if it is not already available.
-   - Must run the test suite with a single command.
-   - Must exit with non-zero status if tests fail.
-   - Should be minimal and safe (e.g. use `set -e`).
-
-C) README.md
-   - Must explain:
-       * What the task is
-       * What files are provided
-       * What files the agent produced
-       * How to run the tests using run_tests.sh
-   - Must be written for another engineer to quickly understand and verify the solution.
-   - No marketing language; keep it technical and concise.
-
----
+After implementing, you must:
+- Run ./run_tests.sh
+- Include the command and a short excerpt of output in your final response (enough to show tests ran)
 
 Success criteria:
-
-- Running `./run_tests.sh` completes successfully.
-- All tests in test_explain.py pass.
-- README.md clearly documents how to evaluate the submission.
+- All tests pass.
+- The manifest is structured, deterministic, and useful for debugging route registration and conflicts.
+- README.md enables a reviewer to quickly evaluate the output quality.
