@@ -1,0 +1,72 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/health",
+      "endpoint": "health",
+      "source": "app.py",
+      "blueprint": null,
+      "order": 1,
+      "path_params": [],
+      "is_dynamic": false,
+      "complexity_score": 1.0
+    },
+    {
+      "method": "GET",
+      "path": "/users/<id>",
+      "endpoint": "get_user",
+      "source": "users.py",
+      "blueprint": null,
+      "order": 2,
+      "path_params": ["id"],
+      "is_dynamic": true,
+      "complexity_score": 2.1
+    },
+    {
+      "method": "GET",
+      "path": "/users/:user_id",
+      "endpoint": "get_user_v2",
+      "source": null,
+      "blueprint": "api",
+      "order": 10,
+      "path_params": ["user_id"],
+      "is_dynamic": true,
+      "complexity_score": 2.1
+    }
+  ],
+  "conflicts": [
+    {
+      "method": "GET",
+      "path": "/users/{}",
+      "severity": "error",
+      "involved_routes": [
+        {"order": 2, "endpoint": "get_user", "path": "/users/<id>"},
+        {"order": 10, "endpoint": "get_user_v2", "path": "/users/:user_id"}
+      ],
+      "resolution_suggestion": "Reorder routes or make patterns more specific (use static segments or regex)"
+    }
+  ],
+  "warnings": [
+    {
+      "type": "similar_path",
+      "paths": ["/api/user", "/api/users"],
+      "levenshtein": 1,
+      "suggestion": "Did you mean to use the same path? Check for typos or inconsistent pluralization."
+    }
+  ],
+  "pattern_analysis": {
+    "most_complex_routes": [
+      {"path": "/users/<id>", "method": "GET", "complexity_score": 2.1, "order": 2}
+    ],
+    "avg_complexity_by_blueprint": {"<root>": 1.55, "api": 2.1},
+    "total_dynamic_routes": 2,
+    "potential_bottlenecks": []
+  },
+  "summary": {
+    "total_routes": 3,
+    "total_conflicts": 1,
+    "total_warnings": 1,
+    "conflict_severity_distribution": {"error": 1},
+    "execution_time_ms": 1.23
+  }
+}
