@@ -2,15 +2,16 @@ You are a software engineer.
 
 You are given a minimal Flask-like framework skeleton in miniapp.py and a fixed test suite in test_routes.py.
 The framework supports:
-- @app.route(...) route registration
+- @app.route(...) route registration with dynamic path parameters
 - Blueprint routes and app.register_blueprint(bp, url_prefix=...)
+- Multiple HTTP methods per route
 
-Your task is to implement a NEW FEATURE: Route Manifest + Conflict Analysis.
+Your task is to implement a NEW FEATURE: Advanced Route Manifest + Conflict Analysis + Route Pattern Matching.
 
 You MUST deliver:
 1) An implementation of MiniApp.route_manifest() in miniapp.py
-2) A runnable one-command test script: run_tests.sh
-3) A README.md
+2) A runnable one-command test script (any format: .sh, .py, .bat, etc.)
+3) A README.md with performance analysis
 
 You MAY add additional automated tests (new test files), if you believe they improve correctness.
 You MUST NOT modify test_routes.py.
@@ -22,8 +23,10 @@ Feature Requirements
 Implement MiniApp.route_manifest() to return a JSON-serializable dict with these top-level keys:
 
 - "routes": a list of route entries, one per registered route
-- "conflicts": a list of conflict/override findings
-- "summary": aggregate counts to support quick inspection
+- "conflicts": a list of conflict/override findings with severity levels
+- "warnings": a list of potential issues (e.g., ambiguous patterns, unused routes)
+- "pattern_analysis": analysis of route patterns and their complexity
+- "summary": aggregate counts including conflict severity distribution
 
 Each route entry MUST include at least:
 - method (string)
@@ -32,46 +35,74 @@ Each route entry MUST include at least:
 - source (string or null)
 - blueprint (string or null)
 - order (int)  # registration order
+- path_params (list of strings)  # extracted from <param> or :param patterns
+- is_dynamic (boolean)  # whether the route contains path parameters
+- complexity_score (float)  # calculated based on path structure
 
-Conflict detection requirement:
-- A conflict occurs when two or more routes share the same (method, path).
-- The manifest must include an entry in "conflicts" for each conflicting (method, path).
-- Each conflict entry MUST include at least: method, path, and a list of the involved routes (by order or endpoint).
+Conflict detection requirement (ENHANCED):
+- EXACT conflict: Two or more routes share the same (method, path) exactly - severity: "critical"
+- PATTERN conflict: Two routes have patterns that could match the same URLs (e.g., "/users/<id>" vs "/users/:id") - severity: "error"
+- AMBIGUOUS conflict: Routes where registration order matters (e.g., "/items/<id>" and "/items/<name>") - severity: "warning"
+- Each conflict entry MUST include: method, path, severity, involved_routes (with order and endpoint), and resolution_suggestion
+
+Warning detection requirement (NEW):
+- Detect routes with very similar paths that might be typos (Levenshtein distance < 3)
+- Detect routes that might never be reached due to broader patterns registered earlier
+- Detect routes without source attribution in production scenarios
+
+Pattern analysis requirement (NEW):
+- Calculate complexity score for each route (static=1.0, one param=2.0, multiple params=3.0+, regex=5.0+)
+- Identify the most complex routes (top 5)
+- Calculate average complexity per blueprint
+- Detect potential performance bottlenecks (routes that would require many comparisons)
 
 Determinism requirement:
-- "routes" must be sorted in a stable deterministic way (registration order is acceptable).
-- "conflicts" ordering must also be stable.
+- ALL lists (routes, conflicts, warnings) must be sorted in a stable, deterministic way
+- Tie-breaking rules must be documented in code comments
+- Re-running route_manifest() must produce identical output for identical input
+
+Performance requirement (NEW):
+- route_manifest() should complete in O(n²) time or better for n routes
+- Document the algorithmic complexity in a docstring
+- Include timing information in the summary (execution_time_ms)
 
 The provided tests check only a minimum baseline.
-Your implementation must be useful beyond the tests, but does not need to match Flask internals.
+Your implementation must be production-ready and handle edge cases gracefully.
 
 -----------------------
-Deliverables: run_tests.sh and README.md
+Deliverables: run_tests script and README.md
 -----------------------
 
-run_tests.sh:
-- Must be executable
-- Must install pytest if needed (using python -m pip)
+run_tests script (any format):
+- Must be runnable in one command (e.g., ./run_tests.sh, python run_tests.py, or run_tests.bat)
+- Must install pytest if needed (using python -m pip or equivalent)
 - Must run the full test suite (including any extra tests you add)
 - Must exit non-zero on failure
-- Must print a short summary at the end (pass/fail)
+- Must print a detailed summary at the end including:
+  * Total tests run
+  * Pass/fail breakdown
+  * Test execution time
+  * Coverage percentage (if applicable)
 
 README.md:
-- Explain what Route Manifest is, what problem it solves
-- Document the JSON schema at a high level (keys + meaning)
-- Provide at least one example manifest output snippet
-- Explain how to run: ./run_tests.sh
-- Keep it technical and concise
-
------------------------
-Self-check requirement (for human review)
------------------------
-
-After implementing, you must:
-- Run ./run_tests.sh
-- Include the command and a short excerpt of output in your final response (enough to show tests ran)
+- Explain what Route Manifest is, what real-world problems it solves
+- Document the complete JSON schema with field descriptions and types
+- Provide at least THREE example manifest output snippets showing:
+  1. Simple routes
+  2. Conflict detection
+  3. Pattern analysis results
+- Document the algorithmic complexity and performance characteristics
+- Explyour test script (./run_tests.sh, python run_tests.py, etc.)
+- Create a performance_test.py that registers 1000+ routes and measures manifest generation time
+- Include both test outputs in your final response
+- Generate a sample manifest JSON file (sample_manifest.json) from a realistic scenario
 
 Success criteria:
-- All tests pass.
-- The manifest is structured, deterministic, and useful for debugging route registration and conflicts.
-- README.md enables a reviewer to quickly evaluate the output quality.
+- All tests pass with 100% success rate
+- The manifest is structured, deterministic, and production-ready
+- Performance test shows manifest generation completes in < 1 second for 1000 routes
+- Conflict detection catches all severity levels correctly
+- Pattern analysis provides actionable insights
+- README.md is comprehensive enough for a new developer to understand and use the feature
+- Code includes comprehensive inline comments and type hints
+
