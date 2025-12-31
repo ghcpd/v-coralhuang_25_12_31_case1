@@ -1,0 +1,170 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/health",
+      "endpoint": "health",
+      "source": "app.py",
+      "blueprint": null,
+      "order": 1,
+      "path_params": [],
+      "is_dynamic": false,
+      "complexity_score": 1.0
+    },
+    {
+      "method": "GET",
+      "path": "/status",
+      "endpoint": "status",
+      "source": "app.py",
+      "blueprint": null,
+      "order": 2,
+      "path_params": [],
+      "is_dynamic": false,
+      "complexity_score": 1.0
+    },
+    {
+      "method": "GET",
+      "path": "/users/<user_id>",
+      "endpoint": "get_user",
+      "source": "users.py",
+      "blueprint": null,
+      "order": 3,
+      "path_params": [
+        "user_id"
+      ],
+      "is_dynamic": true,
+      "complexity_score": 2.0
+    },
+    {
+      "method": "GET",
+      "path": "/users/<user_id>/posts/<post_id>",
+      "endpoint": "get_post",
+      "source": "users.py",
+      "blueprint": null,
+      "order": 4,
+      "path_params": [
+        "user_id",
+        "post_id"
+      ],
+      "is_dynamic": true,
+      "complexity_score": 3.5
+    },
+    {
+      "method": "POST",
+      "path": "/users/<user_id>",
+      "endpoint": "create_user",
+      "source": "users_api.py",
+      "blueprint": null,
+      "order": 5,
+      "path_params": [
+        "user_id"
+      ],
+      "is_dynamic": true,
+      "complexity_score": 2.0
+    },
+    {
+      "method": "GET",
+      "path": "/admin/dashboard",
+      "endpoint": "dashboard",
+      "source": "admin.py",
+      "blueprint": "admin",
+      "order": 6,
+      "path_params": [],
+      "is_dynamic": false,
+      "complexity_score": 1.0
+    },
+    {
+      "method": "GET",
+      "path": "/admin/users/:id/edit",
+      "endpoint": "edit_user",
+      "source": "admin.py",
+      "blueprint": "admin",
+      "order": 7,
+      "path_params": [
+        "id"
+      ],
+      "is_dynamic": true,
+      "complexity_score": 2.0
+    },
+    {
+      "method": "GET",
+      "path": "/v1/users",
+      "endpoint": "list_users",
+      "source": "api.py",
+      "blueprint": "api",
+      "order": 8,
+      "path_params": [],
+      "is_dynamic": false,
+      "complexity_score": 1.0
+    },
+    {
+      "method": "POST",
+      "path": "/v1/users",
+      "endpoint": "create_api_user",
+      "source": "api.py",
+      "blueprint": "api",
+      "order": 9,
+      "path_params": [],
+      "is_dynamic": false,
+      "complexity_score": 1.0
+    }
+  ],
+  "conflicts": [],
+  "warnings": [],
+  "pattern_analysis": {
+    "most_complex_routes": [
+      {
+        "path": "/users/<user_id>/posts/<post_id>",
+        "method": "GET",
+        "complexity_score": 3.5,
+        "order": 4
+      },
+      {
+        "path": "/admin/users/:id/edit",
+        "method": "GET",
+        "complexity_score": 2.0,
+        "order": 7
+      },
+      {
+        "path": "/users/<user_id>",
+        "method": "GET",
+        "complexity_score": 2.0,
+        "order": 3
+      },
+      {
+        "path": "/users/<user_id>",
+        "method": "POST",
+        "complexity_score": 2.0,
+        "order": 5
+      },
+      {
+        "path": "/admin/dashboard",
+        "method": "GET",
+        "complexity_score": 1.0,
+        "order": 6
+      }
+    ],
+    "avg_complexity_by_blueprint": {
+      "app": 1.9,
+      "admin": 1.5,
+      "api": 1.0
+    },
+    "total_dynamic_routes": 4,
+    "total_static_routes": 5,
+    "potential_bottlenecks": [
+      {
+        "path": "/users/<user_id>/posts/<post_id>",
+        "method": "GET",
+        "complexity_score": 3.5,
+        "reason": "High complexity score (3.5) - 2 parameters or regex pattern"
+      }
+    ]
+  },
+  "summary": {
+    "total_routes": 9,
+    "total_conflicts": 0,
+    "total_warnings": 0,
+    "conflict_severity_distribution": {},
+    "execution_time_ms": 1.0
+  }
+}

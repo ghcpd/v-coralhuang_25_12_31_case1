@@ -1,0 +1,145 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/data",
+      "endpoint": "get_data_v1",
+      "source": "v1.py",
+      "blueprint": null,
+      "order": 1,
+      "path_params": [],
+      "is_dynamic": false,
+      "complexity_score": 1.0
+    },
+    {
+      "method": "GET",
+      "path": "/data",
+      "endpoint": "get_data_v2",
+      "source": "v2.py",
+      "blueprint": null,
+      "order": 2,
+      "path_params": [],
+      "is_dynamic": false,
+      "complexity_score": 1.0
+    },
+    {
+      "method": "GET",
+      "path": "/items/<id>",
+      "endpoint": "get_item",
+      "source": "items.py",
+      "blueprint": null,
+      "order": 3,
+      "path_params": [
+        "id"
+      ],
+      "is_dynamic": true,
+      "complexity_score": 2.0
+    },
+    {
+      "method": "GET",
+      "path": "/items/<name>",
+      "endpoint": "get_item_alt",
+      "source": "items_alt.py",
+      "blueprint": null,
+      "order": 4,
+      "path_params": [
+        "name"
+      ],
+      "is_dynamic": true,
+      "complexity_score": 2.0
+    }
+  ],
+  "conflicts": [
+    {
+      "type": "exact",
+      "method": "GET",
+      "path": "/data",
+      "severity": "critical",
+      "involved_routes": [
+        {
+          "order": 1,
+          "endpoint": "get_data_v1",
+          "source": "v1.py"
+        },
+        {
+          "order": 2,
+          "endpoint": "get_data_v2",
+          "source": "v2.py"
+        }
+      ],
+      "resolution_suggestion": "Multiple handlers registered for GET /data. Remove duplicate route definition or merge handlers."
+    },
+    {
+      "type": "ambiguous",
+      "method": "GET",
+      "path": "/items/<id> vs /items/<name>",
+      "severity": "warning",
+      "involved_routes": [
+        {
+          "order": 3,
+          "endpoint": "get_item",
+          "source": "items.py"
+        },
+        {
+          "order": 4,
+          "endpoint": "get_item_alt",
+          "source": "items_alt.py"
+        }
+      ],
+      "resolution_suggestion": "Routes /items/<id> and /items/<name> may conflict. Consider reordering or making patterns more specific."
+    }
+  ],
+  "warnings": [
+    {
+      "type": "unreachable_route",
+      "message": "Route '/items/<name>' (order 4) may be shadowed by earlier route '/items/<id>' (order 3). Consider reordering or making patterns more specific.",
+      "shadowed_route": "/items/<name>",
+      "shadowing_route": "/items/<id>",
+      "severity": "warning"
+    }
+  ],
+  "pattern_analysis": {
+    "most_complex_routes": [
+      {
+        "path": "/items/<id>",
+        "method": "GET",
+        "complexity_score": 2.0,
+        "order": 3
+      },
+      {
+        "path": "/items/<name>",
+        "method": "GET",
+        "complexity_score": 2.0,
+        "order": 4
+      },
+      {
+        "path": "/data",
+        "method": "GET",
+        "complexity_score": 1.0,
+        "order": 1
+      },
+      {
+        "path": "/data",
+        "method": "GET",
+        "complexity_score": 1.0,
+        "order": 2
+      }
+    ],
+    "avg_complexity_by_blueprint": {
+      "app": 1.5
+    },
+    "total_dynamic_routes": 2,
+    "total_static_routes": 2,
+    "potential_bottlenecks": []
+  },
+  "summary": {
+    "total_routes": 4,
+    "total_conflicts": 2,
+    "total_warnings": 1,
+    "conflict_severity_distribution": {
+      "critical": 1,
+      "warning": 1
+    },
+    "execution_time_ms": 0.0
+  }
+}

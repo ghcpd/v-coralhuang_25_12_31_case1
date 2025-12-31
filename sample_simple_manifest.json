@@ -1,0 +1,76 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/health",
+      "endpoint": "health",
+      "source": "app.py",
+      "blueprint": null,
+      "order": 1,
+      "path_params": [],
+      "is_dynamic": false,
+      "complexity_score": 1.0
+    },
+    {
+      "method": "GET",
+      "path": "/status",
+      "endpoint": "status",
+      "source": "app.py",
+      "blueprint": null,
+      "order": 2,
+      "path_params": [],
+      "is_dynamic": false,
+      "complexity_score": 1.0
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/<user_id>",
+      "endpoint": "get_user",
+      "source": "api.py",
+      "blueprint": null,
+      "order": 3,
+      "path_params": [
+        "user_id"
+      ],
+      "is_dynamic": true,
+      "complexity_score": 2.0
+    }
+  ],
+  "conflicts": [],
+  "warnings": [],
+  "pattern_analysis": {
+    "most_complex_routes": [
+      {
+        "path": "/api/users/<user_id>",
+        "method": "GET",
+        "complexity_score": 2.0,
+        "order": 3
+      },
+      {
+        "path": "/health",
+        "method": "GET",
+        "complexity_score": 1.0,
+        "order": 1
+      },
+      {
+        "path": "/status",
+        "method": "GET",
+        "complexity_score": 1.0,
+        "order": 2
+      }
+    ],
+    "avg_complexity_by_blueprint": {
+      "app": 1.33
+    },
+    "total_dynamic_routes": 1,
+    "total_static_routes": 2,
+    "potential_bottlenecks": []
+  },
+  "summary": {
+    "total_routes": 3,
+    "total_conflicts": 0,
+    "total_warnings": 0,
+    "conflict_severity_distribution": {},
+    "execution_time_ms": 0.0
+  }
+}
