@@ -470,3 +470,31 @@ If you want, I can now:
 Would you like me to create a PR/commit message and push these changes?
 
 Made changes.
+
+User: u did not write a readme
+
+GitHub Copilot: Optimizing tool selection...Writing a comprehensive README with schema, examples, performance numbers, and run instructions now.
+
+Created [](file:///c%3A/Bug_Bash/25_12_31/v-coralhuang_25_12_31_case1/README.md)
+
+Finding: README.md was missing — added a complete, developer-focused README that documents the manifest schema, examples, performance numbers, how-to-run, and CI suggestions. ✅
+
+What I changed (single action)
+- Created README.md in the repository root with:
+  - feature explanation, JSON schema, three example manifest snippets
+  - algorithmic complexity, determinism guarantees, performance numbers
+  - run & debug instructions (run_tests.py, performance_test.py, `MINIAPP_PROFILE`)
+  - sample outputs and recommended CI integrations
+
+Next steps (you choose)
+- I can open a ready-to-submit PR with the changes and a CI workflow that fails on critical conflicts.
+- Or I can add a small CLI `miniapp manifest --output manifest.json` and/or a GitHub Actions workflow now.
+
+Commands you can run locally
+- Run tests: python run_tests.py
+- Quick perf: python performance_test.py
+- Generate manifest interactively: run a small Python snippet that registers routes and calls `app.route_manifest()`
+
+Would you like a PR and a CI job added now?
+
+Made changes.
