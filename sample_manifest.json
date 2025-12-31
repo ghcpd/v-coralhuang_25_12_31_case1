@@ -1,0 +1,237 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/health",
+      "endpoint": "health",
+      "source": "app.py",
+      "blueprint": null,
+      "order": 1,
+      "path_params": [],
+      "is_dynamic": false,
+      "complexity_score": 1.0
+    },
+    {
+      "method": "GET",
+      "path": "/users",
+      "endpoint": "list_users",
+      "source": "users.py",
+      "blueprint": null,
+      "order": 2,
+      "path_params": [],
+      "is_dynamic": false,
+      "complexity_score": 1.0
+    },
+    {
+      "method": "GET",
+      "path": "/users/<user_id>",
+      "endpoint": "get_user",
+      "source": "users.py",
+      "blueprint": null,
+      "order": 3,
+      "path_params": [
+        "user_id"
+      ],
+      "is_dynamic": true,
+      "complexity_score": 2.0
+    },
+    {
+      "method": "GET",
+      "path": "/posts/:post_id/comments/:comment_id",
+      "endpoint": "get_comment",
+      "source": "posts.py",
+      "blueprint": null,
+      "order": 4,
+      "path_params": [
+        "post_id",
+        "comment_id"
+      ],
+      "is_dynamic": true,
+      "complexity_score": 3.0
+    },
+    {
+      "method": "GET",
+      "path": "/api/status",
+      "endpoint": "api_status",
+      "source": "api.py",
+      "blueprint": "api",
+      "order": 5,
+      "path_params": [],
+      "is_dynamic": false,
+      "complexity_score": 1.0
+    },
+    {
+      "method": "GET",
+      "path": "/conflict",
+      "endpoint": "conflict_a",
+      "source": "a.py",
+      "blueprint": null,
+      "order": 6,
+      "path_params": [],
+      "is_dynamic": false,
+      "complexity_score": 1.0
+    },
+    {
+      "method": "GET",
+      "path": "/conflict",
+      "endpoint": "conflict_b",
+      "source": "b.py",
+      "blueprint": null,
+      "order": 7,
+      "path_params": [],
+      "is_dynamic": false,
+      "complexity_score": 1.0
+    },
+    {
+      "method": "GET",
+      "path": "/api/user",
+      "endpoint": "user_profile",
+      "source": "similar.py",
+      "blueprint": null,
+      "order": 8,
+      "path_params": [],
+      "is_dynamic": false,
+      "complexity_score": 1.0
+    },
+    {
+      "method": "GET",
+      "path": "/api/users",
+      "endpoint": "users_list",
+      "source": "similar.py",
+      "blueprint": null,
+      "order": 9,
+      "path_params": [],
+      "is_dynamic": false,
+      "complexity_score": 1.0
+    }
+  ],
+  "conflicts": [
+    {
+      "method": "GET",
+      "path": "/conflict",
+      "severity": "critical",
+      "involved_routes": [
+        {
+          "order": 6,
+          "endpoint": "conflict_a"
+        },
+        {
+          "order": 7,
+          "endpoint": "conflict_b"
+        }
+      ],
+      "resolution_suggestion": "Remove duplicate routes or merge handlers"
+    }
+  ],
+  "warnings": [
+    {
+      "type": "similar_paths",
+      "message": "Paths '/conflict' and '/conflict' are very similar (possible typo)",
+      "involved_routes": [
+        {
+          "order": 6,
+          "endpoint": "conflict_a"
+        },
+        {
+          "order": 7,
+          "endpoint": "conflict_b"
+        }
+      ],
+      "suggestion": "Check for typos in path definitions"
+    },
+    {
+      "type": "similar_paths",
+      "message": "Paths '/api/user' and '/api/users' are very similar (possible typo)",
+      "involved_routes": [
+        {
+          "order": 8,
+          "endpoint": "user_profile"
+        },
+        {
+          "order": 9,
+          "endpoint": "users_list"
+        }
+      ],
+      "suggestion": "Check for typos in path definitions"
+    }
+  ],
+  "pattern_analysis": {
+    "most_complex_routes": [
+      {
+        "method": "GET",
+        "path": "/posts/:post_id/comments/:comment_id",
+        "endpoint": "get_comment",
+        "source": "posts.py",
+        "blueprint": null,
+        "order": 4,
+        "path_params": [
+          "post_id",
+          "comment_id"
+        ],
+        "is_dynamic": true,
+        "complexity_score": 3.0
+      },
+      {
+        "method": "GET",
+        "path": "/users/<user_id>",
+        "endpoint": "get_user",
+        "source": "users.py",
+        "blueprint": null,
+        "order": 3,
+        "path_params": [
+          "user_id"
+        ],
+        "is_dynamic": true,
+        "complexity_score": 2.0
+      },
+      {
+        "method": "GET",
+        "path": "/health",
+        "endpoint": "health",
+        "source": "app.py",
+        "blueprint": null,
+        "order": 1,
+        "path_params": [],
+        "is_dynamic": false,
+        "complexity_score": 1.0
+      },
+      {
+        "method": "GET",
+        "path": "/users",
+        "endpoint": "list_users",
+        "source": "users.py",
+        "blueprint": null,
+        "order": 2,
+        "path_params": [],
+        "is_dynamic": false,
+        "complexity_score": 1.0
+      },
+      {
+        "method": "GET",
+        "path": "/api/status",
+        "endpoint": "api_status",
+        "source": "api.py",
+        "blueprint": "api",
+        "order": 5,
+        "path_params": [],
+        "is_dynamic": false,
+        "complexity_score": 1.0
+      }
+    ],
+    "avg_complexity_by_blueprint": {
+      "main": 1.375,
+      "api": 1.0
+    },
+    "total_dynamic_routes": 2,
+    "potential_bottlenecks": []
+  },
+  "summary": {
+    "total_routes": 9,
+    "total_conflicts": 1,
+    "total_warnings": 2,
+    "conflict_severity_distribution": {
+      "critical": 1
+    },
+    "execution_time_ms": 0.0
+  }
+}
