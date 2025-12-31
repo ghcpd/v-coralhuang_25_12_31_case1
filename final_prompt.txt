@@ -1,0 +1,108 @@
+You are a software engineer working on a small Python codebase.
+
+You are given exactly TWO files:
+- explain.py (baseline implementation)
+- test_explain.py (fixed test suite)
+
+You must produce THREE deliverables:
+
+A) Implement the function `explain_config_value` in explain.py so that all tests pass.
+B) Create a one-command test script named `run_tests.sh`.
+C) Write a README.md explaining how to run and evaluate the solution.
+
+You are NOT allowed to modify test_explain.py.
+You may add new files only if explicitly required (this task requires run_tests.sh and README.md).
+Do NOT introduce third-party runtime dependencies besides pytest for testing.
+
+---
+
+Feature: "Config Diff Explanation"
+
+There are three configuration layers from lowest to highest priority:
+
+1) base
+2) env
+3) override
+
+Priority rule:
+override > env > base
+
+The function `explain_config_value` must return an Explanation object describing
+how the final value of a configuration key is derived.
+
+---
+
+Rules:
+
+1. Nested keys:
+   - The key may be dot-separated, e.g. "db.timeout".
+   - Each segment traverses dictionaries.
+   - If any intermediate segment is missing or is not a dict,
+     that layer treats the key as missing.
+
+2. Explicit None:
+   - If a layer defines the key with value None, the key is explicitly defined.
+   - None is a valid value and must not be treated as missing.
+   - The source must point to that layer.
+
+3. Delete semantics:
+   - The constant DELETE represents explicit deletion.
+   - If the highest-priority layer that defines the key sets it to DELETE:
+       - The final result is treated as missing.
+       - final_value must be None.
+       - source must be "missing".
+       - All lower-priority values are suppressed.
+
+4. overridden:
+   - True if the key is defined in two or more layers among base/env/override.
+   - Definition includes explicit None and DELETE.
+   - Otherwise False.
+
+5. override_chain:
+   - A list of layer names that define the key.
+   - Ordered from lowest to highest priority:
+     ["base", "env", "override"].
+   - Includes layers where the value is None or DELETE.
+   - Missing everywhere results in an empty list.
+
+---
+
+Constraints:
+
+- Do NOT mutate the input dictionaries.
+- Do NOT merge dictionaries and reverse-infer explanations.
+- Do NOT change any tests.
+- Do NOT change public APIs (DELETE, Explanation, function signature).
+- Do NOT add extra executables or tooling beyond what is required.
+
+---
+
+Deliverable details:
+
+A) explain.py
+   - Only the body of explain_config_value should be changed.
+   - All semantics must match the test suite exactly.
+
+B) run_tests.sh
+   - Must be executable.
+   - Must install pytest if it is not already available.
+   - Must run the test suite with a single command.
+   - Must exit with non-zero status if tests fail.
+   - Should be minimal and safe (e.g. use `set -e`).
+
+C) README.md
+   - Must explain:
+       * What the task is
+       * What files are provided
+       * What files the agent produced
+       * How to run the tests using run_tests.sh
+   - Must be written for another engineer to quickly understand and verify the solution.
+   - No marketing language; keep it technical and concise.
+
+---
+
+Success criteria:
+
+- Running `./run_tests.sh` completes successfully.
+- All tests in test_explain.py pass.
+- README.md clearly documents how to evaluate the submission.
